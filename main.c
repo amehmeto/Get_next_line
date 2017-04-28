@@ -6,7 +6,7 @@
 /*   By: amehmeto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/20 19:49:00 by amehmeto          #+#    #+#             */
-/*   Updated: 2017/04/27 03:55:38 by amehmeto         ###   ########.fr       */
+/*   Updated: 2017/04/28 03:02:58 by amehmeto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ int		main(int ac, char **av)
 	line = NULL;
 	while (a > 0)
 	{
-		//a = get_next_line(fd, &line);
 		a = get_next_line(fd, &line);
 		printf("%s\t  a = %d\n", line, a);
 	}
