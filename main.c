@@ -6,7 +6,7 @@
 /*   By: amehmeto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/20 19:49:00 by amehmeto          #+#    #+#             */
-/*   Updated: 2017/04/28 03:02:58 by amehmeto         ###   ########.fr       */
+/*   Updated: 2017/04/29 05:28:10 by amehmeto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,10 @@ int		main(int ac, char **av)
 	while (a > 0)
 	{
 		a = get_next_line(fd, &line);
-		printf("%s\t  a = %d\n", line, a);
+		printf("%s###gnl = %d\n", line, a);
 	}
+	printf("%s###gnl = %d\n", line, get_next_line(fd, &line));
+	printf("%s###gnl = %d\n", line, get_next_line(fd, &line));
 
 	if (close(fd) == -1)
 		ft_putstr("close error\n");
