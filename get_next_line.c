@@ -6,79 +6,89 @@
 /*   By: amehmeto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 07:12:06 by amehmeto          #+#    #+#             */
-/*   Updated: 2017/04/29 05:30:38 by amehmeto         ###   ########.fr       */
+/*   Updated: 2017/05/03 10:25:18 by amehmeto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		get_next_line(const int fd, char **line)
+static char		*tmp_builder(struct s_struct o, char buffer[BUFF_SIZE + 1],
+		char *excess)
 {
-	char			buffer[BUFF_SIZE + 1];
-	char			*tmp, *tmp2;
-	static char		*excess;
-	size_t			eol, i;
-	ssize_t			ret;
+	if (o.tmp2)
+		o.tmp = ft_strjoin(o.tmp2, buffer);
+	else if (excess)
+		o.tmp = ft_strjoin(excess, buffer);
+	else
+		o.tmp = ft_strdup(buffer);
+	return (o.tmp);
+}
 
-	tmp2 = NULL;
-	tmp = NULL;
-	eol = 0;
+static size_t	eol_snitch(struct s_struct *o)
+{
+	size_t	i;
+
+	i = 0;
+	while (o->tmp[i] && o->tmp[i] != '\n')
+		i++;
+	if (o->tmp[i] == '\n')
+		o->eol = i + 1;
+	return (i);
+}
+
+static char		*excess_storer(char **line, struct s_struct o, char *excess)
+{
+	o.eol--;
+	*line = (o.tmp2) ? o.tmp2 : ft_strdup("\0");
+	excess = ft_strsub(o.tmp, (unsigned)o.eol + 1, ft_strlen(o.tmp) - o.eol);
+	free(o.tmp);
+	if (!ft_strlen(excess))
+	{
+		free(excess);
+		excess = NULL;
+	}
+	return (excess);
+}
+
+static int		after_loop(struct s_struct o, ssize_t ret, char **line)
+{
+	if (!o.eol && !ret && o.tmp2)
+	{
+		*line = o.tmp2;
+		free(o.tmp2);
+		return (1);
+	}
+	if (!ret)
+		*line = NULL;
+	return (0);
+}
+
+int				get_next_line(const int fd, char **line)
+{
+	char				buffer[BUFF_SIZE + 1];
+	static char			*excess;
+	ssize_t				ret;
+	struct s_struct		o;
+	size_t				i;
 
 	if (fd < 0 || line == NULL)
 		return (-1);
-
+	ft_bzero((void *)&o, sizeof(o));
 	while ((ret = read(fd, buffer, BUFF_SIZE)) || excess)
 	{
 		if (ret == -1)
 			return (-1);
 		buffer[ret] = '\0';
-//		printf("\n_________________ ret = %zu ______________________\n\n", ret);
-//		printf("\033[31mtmp2\033[0m = %s||\n", tmp2);
-//		printf("\033[33mexcess\033[0m = %s||\n", excess);
-//		printf("buffer = %s||\n", buffer);
-		if (tmp2)
-			tmp = ft_strjoin(tmp2, buffer);
-		else if (excess)
-			tmp = ft_strjoin(excess, buffer);
-		else
-			tmp = ft_strdup(buffer);
-//		printf("\ntmp = %s||\n\n", tmp);
-		i = 0;
-		while (tmp[i] && tmp[i] != '\n')
-			i++;
-		if (tmp[i] == '\n')
-			eol = i + 1;
-		tmp2 = (i) ? ft_strsub(tmp, 0, i) : NULL;
-//		printf("\033[31mtmp2\033[0m = %s||\n", tmp2);
-		if (eol)
+		free(o.tmp);
+		o.tmp = tmp_builder(o, buffer, excess);
+		i = eol_snitch(&o);
+		free(o.tmp2);
+		o.tmp2 = (i) ? ft_strsub(o.tmp, 0, i) : NULL;
+		if (o.eol)
 		{
-			eol--;
-			*line = (tmp2) ? tmp2 : "\0";
-//			printf("\033[32mline\033[0m = %s||\n\n", *line);
-//			printf("tmp = %s||\n", tmp);
-			excess = ft_strsub(tmp, (unsigned)eol + 1, ft_strlen(tmp) - eol);
-			if (!ft_strlen(excess))
-				excess = NULL;
-//			printf("\033[33mexcess\033[0m = %s||\n", excess);
+			excess = excess_storer(line, o, excess);
 			return (1);
 		}
 	}
-//	printf("\n_________________ ret = %zu ______________________\n\n", ret);
-//	printf("\033[31mtmp2\033[0m = %s||\n", tmp2);
-//	printf("\033[33mexcess\033[0m = %s||\n", excess);
-//	printf("buffer = %s||\n", buffer);
-//	printf("\ntmp = %s||\n\n", tmp);
-//	printf("\033[31mtmp2\033[0m = %s||\n", tmp2);
-//	printf("\033[32mline\033[0m = %s||\n\n", *line);
-//	printf("tmp = %s||\n", tmp);
-//	printf("\033[33mexcess\033[0m = %s||\n", excess);
-	if (!eol && !ret && tmp2)
-	{
-		*line = tmp2;
-		tmp2 = NULL;
-		return (1);
-	}
-	if (!ret)
-		*line = ft_strnew(0);
-	return (0);
+	return (after_loop(o, ret, line));
 }
