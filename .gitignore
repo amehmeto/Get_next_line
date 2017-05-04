@@ -1,4 +1,5 @@
 *.out
 test
 gget_next_line.c
-
+*.swp
+*.o

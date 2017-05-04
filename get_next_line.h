@@ -6,7 +6,7 @@
 /*   By: amehmeto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 07:26:37 by amehmeto          #+#    #+#             */
-/*   Updated: 2017/05/03 18:49:28 by amehmeto         ###   ########.fr       */
+/*   Updated: 2017/05/04 19:25:54 by amehmeto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "./libft/libft.h"
 # include <fcntl.h>
 # include <stdio.h>
-# define BUFF_SIZE 61
+# define BUFF_SIZE 15
 
 typedef struct	s_struct
 {
@@ -24,6 +24,7 @@ typedef struct	s_struct
 	char		*tmp2;
 	size_t		eol;
 	ssize_t		ret;
+	size_t		i;
 }				t_wesh;
 
 int				get_next_line(const int fd, char **line);
