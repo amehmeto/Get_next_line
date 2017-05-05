@@ -6,7 +6,7 @@
 /*   By: amehmeto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 07:12:06 by amehmeto          #+#    #+#             */
-/*   Updated: 2017/05/04 19:25:11 by amehmeto         ###   ########.fr       */
+/*   Updated: 2017/05/05 14:18:49 by amehmeto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,15 @@ static char		*tmp_builder(struct s_struct o, char buffer[BUFF_SIZE + 1],
 		char *excess)
 {
 	if (o.tmp2)
+	{
 		o.tmp = ft_strjoin(o.tmp2, buffer);
+		free(o.tmp2);
+	}
 	else if (excess)
+	{
 		o.tmp = ft_strjoin(excess, buffer);
+		free(excess);
+	}
 	else
 		o.tmp = ft_strdup(buffer);
 	return (o.tmp);
@@ -78,7 +84,6 @@ int				get_next_line(const int fd, char **line)
 		free(o.tmp);
 		o.tmp = tmp_builder(o, buffer, excess);
 		o.i = eol_snitch(&o);
-		free(o.tmp2);
 		o.tmp2 = (o.i) ? ft_strsub(o.tmp, 0, o.i) : NULL;
 		if (o.eol)
 		{
