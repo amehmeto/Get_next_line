@@ -6,7 +6,7 @@
 /*   By: amehmeto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 07:26:37 by amehmeto          #+#    #+#             */
-/*   Updated: 2017/05/04 19:25:54 by amehmeto         ###   ########.fr       */
+/*   Updated: 2017/05/08 01:40:33 by amehmeto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ typedef struct	s_struct
 {
 	char		*tmp;
 	char		*tmp2;
+	size_t		i;
 	size_t		eol;
 	ssize_t		ret;
-	size_t		i;
 }				t_wesh;
 
 int				get_next_line(const int fd, char **line);

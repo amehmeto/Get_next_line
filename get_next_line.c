@@ -6,14 +6,16 @@
 /*   By: amehmeto <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/14 07:12:06 by amehmeto          #+#    #+#             */
-/*   Updated: 2017/05/05 14:18:49 by amehmeto         ###   ########.fr       */
+/*   Updated: 2017/05/08 02:34:37 by amehmeto         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#define RET_OR_EXCESS (o.ret = read(fd, buffer, BUFF_SIZE)) || excess
+//#define FD_CHECK (fd == excess_fd || !excess_fd)
 
 static char		*tmp_builder(struct s_struct o, char buffer[BUFF_SIZE + 1],
-		char *excess)
+																char *excess)
 {
 	if (o.tmp2)
 	{
@@ -71,12 +73,23 @@ int				get_next_line(const int fd, char **line)
 {
 	char				buffer[BUFF_SIZE + 1];
 	static char			*excess;
+	static int			excess_fd;
 	struct s_struct		o;
 
 	ft_bzero((void *)&o, sizeof(o));
 	if (fd < 0 || line == NULL)
 		return (-1);
-	while ((o.ret = read(fd, buffer, BUFF_SIZE)) || excess)
+//	printf("excess_fd = %d\n", excess_fd);
+	if ((fd == excess_fd || !excess_fd))
+		;
+//		printf("excess = %s\n", excess);
+	else
+	{
+//		printf("coucou\n");
+		free(excess);
+		excess = NULL;
+	}
+	while (RET_OR_EXCESS)
 	{
 		if (o.ret == -1)
 			return (-1);
@@ -88,6 +101,7 @@ int				get_next_line(const int fd, char **line)
 		if (o.eol)
 		{
 			excess = excess_storer(line, o, excess);
+			excess_fd = fd;
 			return (1);
 		}
 		excess = NULL;
